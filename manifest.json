@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "LinguaPop",
+  "version": "0.1.0",
+  "description": "Translate selected text with a floating card or context menu.",
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://tmt.intl.tencentcloudapi.com/*",
+    "https://fanyi-api.baidu.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background/background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/assets/logo.png"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ]
+    }
+  ],
+  "options_page": "src/options/options.html",
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "src/shared/constants.js",
+        "src/shared/storage.js",
+        "src/content/content.js"
+      ],
+      "css": [
+        "src/content/content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
