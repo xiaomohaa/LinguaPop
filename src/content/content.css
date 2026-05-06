@@ -15,15 +15,15 @@
   min-width: 36px;
   height: 36px;
   padding: 0 12px;
-  border: 1px solid rgba(100, 72, 42, 0.18);
+  border: 1px solid rgba(103, 149, 201, 0.2);
   border-radius: 999px;
-  background: linear-gradient(135deg, #fff0cf 0%, #f3ddba 100%);
-  color: #2c2118;
+  background: linear-gradient(135deg, #f5fbff 0%, #dcebfb 100%);
+  color: #234d77;
   font-size: 13px;
   font-weight: 600;
   line-height: 34px;
   text-align: center;
-  box-shadow: 0 14px 26px rgba(44, 33, 24, 0.16);
+  box-shadow: 0 14px 26px rgba(80, 129, 182, 0.18);
   cursor: pointer;
 }
 
@@ -31,12 +31,12 @@
   position: absolute;
   z-index: 2147483647;
   width: min(336px, calc(100vw - 24px));
-  border: 1px solid rgba(92, 73, 47, 0.12);
+  border: 1px solid rgba(97, 140, 191, 0.14);
   border-radius: 22px;
   overflow: hidden;
-  background: #fffaf4;
-  color: #241914;
-  box-shadow: 0 28px 56px rgba(44, 33, 24, 0.18);
+  background: #f8fbff;
+  color: #173a60;
+  box-shadow: 0 26px 52px rgba(89, 127, 175, 0.16);
 }
 
 .linguapop-header {
@@ -45,8 +45,8 @@
   justify-content: space-between;
   gap: 10px;
   padding: 10px 14px 9px;
-  background: linear-gradient(135deg, #2c2118 0%, #6e4929 100%);
-  color: #fff7ef;
+  background: linear-gradient(135deg, #b7d6f8 0%, #7eaee2 100%);
+  color: #14375d;
 }
 
 .linguapop-brand {
@@ -70,8 +70,8 @@
 .linguapop-body {
   padding: 16px;
   background:
-    radial-gradient(circle at top left, rgba(255, 240, 214, 0.66), transparent 38%),
-    linear-gradient(180deg, #fffaf4 0%, #fffdf9 100%);
+    radial-gradient(circle at top left, rgba(232, 244, 255, 0.92), transparent 36%),
+    linear-gradient(180deg, #f8fbff 0%, #fdfefe 100%);
 }
 
 .linguapop-section {
@@ -81,7 +81,7 @@
 
 .linguapop-label {
   display: block;
-  color: #8a6f57;
+  color: #6f88a4;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -91,7 +91,7 @@
 .linguapop-divider {
   height: 1px;
   margin: 12px 0;
-  background: linear-gradient(90deg, rgba(109, 82, 52, 0.16), rgba(109, 82, 52, 0));
+  background: linear-gradient(90deg, rgba(111, 153, 199, 0.18), rgba(111, 153, 199, 0));
 }
 
 .linguapop-close {
@@ -99,8 +99,8 @@
   height: 22px;
   border: 0;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
-  color: rgba(255, 247, 239, 0.92);
+  background: rgba(255, 255, 255, 0.34);
+  color: rgba(20, 55, 93, 0.92);
   font-size: 14px;
   line-height: 22px;
   text-align: center;
@@ -114,7 +114,7 @@
   flex: 0 0 auto;
   border-radius: 5px;
   box-shadow: 0 4px 10px rgba(14, 46, 84, 0.16);
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
 .linguapop-original,
@@ -127,14 +127,14 @@
 }
 
 .linguapop-original {
-  color: #5e4938;
+  color: #496680;
   font-size: 13px;
   line-height: 1.5;
 }
 
 .linguapop-meta {
   margin: 0;
-  color: rgba(255, 242, 228, 0.84);
+  color: rgba(20, 55, 93, 0.9);
   font-size: 11px;
   font-weight: 600;
   line-height: 1.35;
@@ -147,8 +147,8 @@
   flex: 0 0 auto;
   padding: 2px 6px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 244, 232, 0.76);
+  background: rgba(255, 255, 255, 0.42);
+  color: rgba(25, 72, 118, 0.86);
   font-size: 9px;
   font-weight: 700;
   line-height: 1.2;
@@ -158,7 +158,7 @@
 }
 
 .linguapop-translated {
-  color: #1f1610;
+  color: #173f69;
   font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
@@ -166,22 +166,22 @@
 
 .linguapop-status,
 .linguapop-error {
-  color: #4d3b2e;
+  color: #42627f;
   font-size: 14px;
   line-height: 1.5;
 }
 
 .linguapop-error {
-  color: #9a3020;
+  color: #c04d45;
 }
 
 .linguapop-settings {
   margin-top: 12px;
   padding: 9px 13px;
-  border: 1px solid rgba(92, 73, 47, 0.16);
+  border: 1px solid rgba(101, 146, 194, 0.18);
   border-radius: 999px;
-  background: linear-gradient(180deg, #f6eee2 0%, #f0e2cf 100%);
-  color: #2c2118;
+  background: linear-gradient(180deg, #f5fbff 0%, #ddeefe 100%);
+  color: #234d77;
   font-size: 13px;
   font-weight: 600;
   line-height: 1;
