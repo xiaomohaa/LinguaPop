@@ -12,6 +12,7 @@ importScripts("../shared/constants.js");
     version: "2018-03-21"
   };
   const baiduEndpoint = "https://fanyi-api.baidu.com/api/trans/vip/translate";
+  const googleEndpoint = "https://translate.googleapis.com/translate_a/single";
 
   function containsCjk(text) {
     return /[\u3400-\u9fff]/.test(text);
@@ -371,6 +372,44 @@ importScripts("../shared/constants.js");
     };
   }
 
+  async function translateWithGoogle(input) {
+    const text = input.text.trim();
+    const targetLang = input.targetLang || getTargetLanguage(text);
+    const params = new URLSearchParams();
+    params.append("client", "gtx");
+    params.append("sl", "auto");
+    params.append("tl", targetLang);
+    params.append("dt", "t");
+    params.append("q", text);
+
+    const response = await fetch(`${googleEndpoint}?${params.toString()}`);
+
+    if (!response.ok) {
+      const error = new Error("provider-error");
+      error.code = response.status === 429 ? "rate-limited" : "provider-error";
+      error.status = response.status;
+      throw error;
+    }
+
+    const responseBody = await response.json();
+    const chunks = Array.isArray(responseBody[0]) ? responseBody[0] : [];
+    const translatedText = chunks.map((item) => item && item[0] ? item[0] : "").join("").trim();
+    const detectedSource = responseBody[2] || "";
+
+    if (!translatedText) {
+      const error = new Error("invalid-provider-response");
+      error.code = "provider-error";
+      throw error;
+    }
+
+    return {
+      originalText: text,
+      translatedText,
+      sourceLang: normalizeLanguage(detectedSource),
+      targetLang: normalizeLanguage(targetLang)
+    };
+  }
+
   function mapTencentErrorCode(code) {
     if (!code) {
       return "provider-error";
@@ -417,6 +456,10 @@ importScripts("../shared/constants.js");
 
     if (selectedProvider === config.provider.baidu) {
       return translateWithBaidu(input);
+    }
+
+    if (selectedProvider === config.provider.google) {
+      return translateWithGoogle(input);
     }
 
     const error = new Error("unsupported-provider");

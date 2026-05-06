@@ -19,8 +19,11 @@
             <select id="provider" name="provider">
               <option value="tencent">腾讯云机器翻译</option>
               <option value="baidu">百度翻译</option>
+              <option value="google">Google（实验性）</option>
             </select>
           </label>
+
+          <p id="provider-note" class="provider-note"></p>
 
           <section id="tencent-fields" class="provider-fields">
             <label class="field">
@@ -56,6 +59,14 @@
               <input id="baidu-secret-key" name="baiduSecretKey" type="password" autocomplete="off" placeholder="请输入 Secret Key">
             </label>
           </section>
+
+          <label class="field">
+            <span>母语</span>
+            <select id="native-language" name="nativeLanguage">
+              <option value="zh">中文</option>
+              <option value="en">英文</option>
+            </select>
+          </label>
 
           <fieldset class="field">
             <legend>触发方式</legend>

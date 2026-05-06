@@ -10,8 +10,10 @@
   const tencentProjectIdInput = document.getElementById("tencent-project-id");
   const baiduAppIdInput = document.getElementById("baidu-app-id");
   const baiduSecretKeyInput = document.getElementById("baidu-secret-key");
+  const nativeLanguageInput = document.getElementById("native-language");
   const tencentFields = document.getElementById("tencent-fields");
   const baiduFields = document.getElementById("baidu-fields");
+  const providerNote = document.getElementById("provider-note");
   const statusNode = document.getElementById("status");
 
   form.addEventListener("submit", onSubmit);
@@ -27,6 +29,7 @@
     tencentProjectIdInput.value = settings.tencentProjectId || config.defaultSettings.tencentProjectId;
     baiduAppIdInput.value = settings.baiduAppId;
     baiduSecretKeyInput.value = settings.baiduSecretKey;
+    nativeLanguageInput.value = settings.nativeLanguage || config.defaultSettings.nativeLanguage;
     syncProviderFields(providerInput.value);
 
     const triggerInput = form.elements.namedItem("triggerMode");
@@ -41,8 +44,27 @@
 
   function syncProviderFields(provider) {
     const isTencent = provider === config.provider.tencent;
+    const isBaidu = provider === config.provider.baidu;
+
     tencentFields.hidden = !isTencent;
-    baiduFields.hidden = isTencent;
+    baiduFields.hidden = !isBaidu;
+    providerNote.textContent = getProviderNote(provider);
+  }
+
+  function getProviderNote(provider) {
+    if (provider === config.provider.tencent) {
+      return "腾讯云模式需要填写 SecretId 和 SecretKey。";
+    }
+
+    if (provider === config.provider.baidu) {
+      return "百度模式需要填写 App ID 和 Secret Key。";
+    }
+
+    if (provider === config.provider.google) {
+      return "Google 为免配置的实验性模式，不保证长期稳定，可能出现限流或失效。";
+    }
+
+    return "";
   }
 
   async function onSubmit(event) {
@@ -56,6 +78,7 @@
       tencentProjectId: String(formData.get("tencentProjectId") || config.defaultSettings.tencentProjectId).trim() || config.defaultSettings.tencentProjectId,
       baiduAppId: String(formData.get("baiduAppId") || "").trim(),
       baiduSecretKey: String(formData.get("baiduSecretKey") || "").trim(),
+      nativeLanguage: String(formData.get("nativeLanguage") || config.defaultSettings.nativeLanguage),
       triggerMode: String(formData.get("triggerMode") || config.triggerModes.auto),
     };
 

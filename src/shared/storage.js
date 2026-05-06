@@ -15,6 +15,7 @@
       tencentProjectId: String(stored.tencentProjectId || defaults.tencentProjectId).trim() || defaults.tencentProjectId,
       baiduAppId: String(stored.baiduAppId || "").trim(),
       baiduSecretKey: String(stored.baiduSecretKey || "").trim(),
+      nativeLanguage: stored.nativeLanguage || defaults.nativeLanguage,
       triggerMode: stored.triggerMode || defaults.triggerMode,
       provider: stored.provider || defaults.provider
     }));

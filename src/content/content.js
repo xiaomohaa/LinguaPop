@@ -11,7 +11,8 @@
     activeRequestId: 0,
     buttonElement: null,
     popupElement: null,
-    popupContext: null
+    popupContext: null,
+    dragState: null
   };
 
   boot();
@@ -20,6 +21,8 @@
     document.addEventListener("mouseup", onSelectionInteraction, true);
     document.addEventListener("keyup", onSelectionInteraction, true);
     document.addEventListener("mousedown", onDocumentMouseDown, true);
+    document.addEventListener("mousemove", onDocumentMouseMove, true);
+    document.addEventListener("mouseup", onDocumentMouseUp, true);
     document.addEventListener("scroll", clearTransientUi, true);
 
     chrome.runtime.onMessage.addListener((message) => {
@@ -173,7 +176,8 @@
           type: config.messages.translateSelection,
           payload: {
             text,
-            provider: requestOptions.providerOverride || undefined
+            provider: requestOptions.providerOverride || undefined,
+            forceTranslate: Boolean(requestOptions.forceTranslate)
           }
         },
         (response) => {
@@ -251,6 +255,7 @@
 
     const header = document.createElement("header");
     header.className = "linguapop-header";
+    header.addEventListener("mousedown", onHeaderDragStart);
 
     const brand = document.createElement("div");
     brand.className = "linguapop-brand";
@@ -258,17 +263,22 @@
     const titleRow = document.createElement("div");
     titleRow.className = "linguapop-title-row";
 
+    const logoBadge = document.createElement("img");
+    logoBadge.className = "linguapop-logo";
+    logoBadge.src = logoUrl;
+    logoBadge.alt = "LinguaPop";
+    titleRow.appendChild(logoBadge);
+
     const meta = document.createElement("p");
     meta.className = "linguapop-meta";
     meta.textContent = viewModel.translation ? formatLanguageMeta(viewModel.translation) : "翻译中";
     titleRow.appendChild(meta);
 
-    const providerSwitch = document.createElement("button");
-    providerSwitch.type = "button";
+    const providerSwitch = document.createElement("select");
     providerSwitch.className = "linguapop-provider";
-    providerSwitch.textContent = formatProviderName(viewModel.provider || (viewModel.translation && viewModel.translation.provider) || state.settings.provider);
-    providerSwitch.addEventListener("click", () => {
-      switchProviderFromPopup();
+    buildProviderOptions(providerSwitch, viewModel.provider || (viewModel.translation && viewModel.translation.provider) || state.settings.provider);
+    providerSwitch.addEventListener("change", (event) => {
+      switchProviderFromPopup(event.target.value);
     });
     titleRow.appendChild(providerSwitch);
 
@@ -278,12 +288,6 @@
 
     const headerActions = document.createElement("div");
     headerActions.className = "linguapop-header-actions";
-
-    const logoBadge = document.createElement("img");
-    logoBadge.className = "linguapop-logo";
-    logoBadge.src = logoUrl;
-    logoBadge.alt = "LinguaPop";
-    headerActions.appendChild(logoBadge);
 
     const closeButton = document.createElement("button");
     closeButton.type = "button";
@@ -380,6 +384,20 @@
         });
         body.appendChild(settingsButton);
       }
+
+      if (viewModel.error.code === "same-as-native-language") {
+        const continueButton = document.createElement("button");
+        continueButton.type = "button";
+        continueButton.className = "linguapop-settings";
+        continueButton.textContent = "继续翻译";
+        continueButton.addEventListener("click", () => {
+          requestTranslation(viewModel.originalText, viewModel.rect, {
+            providerOverride: viewModel.provider || state.settings.provider,
+            forceTranslate: true
+          });
+        });
+        body.appendChild(continueButton);
+      }
     }
 
     popup.appendChild(body);
@@ -408,23 +426,41 @@
       return "百度";
     }
 
+    if (provider === config.provider.google) {
+      return "谷歌";
+    }
+
     return provider;
   }
 
-  function getAlternateProvider(provider) {
-    return provider === config.provider.tencent ? config.provider.baidu : config.provider.tencent;
+  function buildProviderOptions(selectElement, selectedProvider) {
+    const providers = [
+      config.provider.tencent,
+      config.provider.baidu,
+      config.provider.google
+    ];
+
+    providers.forEach((provider) => {
+      const option = document.createElement("option");
+      option.value = provider;
+      option.textContent = formatProviderName(provider);
+      option.selected = provider === selectedProvider;
+      selectElement.appendChild(option);
+    });
   }
 
-  function switchProviderFromPopup() {
+  function switchProviderFromPopup(nextProvider) {
     if (!state.popupContext || !state.popupContext.text || !state.popupContext.rect) {
       return;
     }
-
-    const nextProvider = getAlternateProvider(state.popupContext.provider || state.settings.provider);
     const currentContext = {
       text: state.popupContext.text,
       rect: state.popupContext.rect
     };
+
+    if (nextProvider === (state.popupContext.provider || state.settings.provider)) {
+      return;
+    }
 
     renderPopup({
       rect: currentContext.rect,
@@ -484,8 +520,59 @@
     element.style.top = `${top}px`;
   }
 
+  function positionElementByCoordinates(element, left, top) {
+    const viewportWidth = document.documentElement.clientWidth;
+    const viewportHeight = document.documentElement.clientHeight;
+    const elementWidth = element.offsetWidth || 336;
+    const elementHeight = element.offsetHeight || 180;
+    const nextLeft = Math.max(12, Math.min(left, viewportWidth - elementWidth - 12));
+    const nextTop = Math.max(12, Math.min(top, viewportHeight - elementHeight - 12));
+
+    element.style.left = `${nextLeft + window.scrollX}px`;
+    element.style.top = `${nextTop + window.scrollY}px`;
+  }
+
   function stopOverlayEvent(event) {
     event.stopPropagation();
+  }
+
+  function onHeaderDragStart(event) {
+    if (!state.popupElement || isInteractiveHeaderControl(event.target)) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const popupRect = state.popupElement.getBoundingClientRect();
+    state.dragState = {
+      offsetX: event.clientX - popupRect.left,
+      offsetY: event.clientY - popupRect.top
+    };
+    state.popupElement.classList.add("linguapop-popup-dragging");
+  }
+
+  function onDocumentMouseMove(event) {
+    if (!state.dragState || !state.popupElement) {
+      return;
+    }
+
+    event.preventDefault();
+    positionElementByCoordinates(
+      state.popupElement,
+      event.clientX - state.dragState.offsetX,
+      event.clientY - state.dragState.offsetY
+    );
+  }
+
+  function onDocumentMouseUp() {
+    if (!state.dragState || !state.popupElement) {
+      state.dragState = null;
+      return;
+    }
+
+    state.popupElement.classList.remove("linguapop-popup-dragging");
+    state.dragState = null;
   }
 
   function renderRuntimeError(rect, text, runtimeMessage) {
@@ -515,6 +602,14 @@
 
   function isNodeInsideOverlay(node) {
     return Boolean(findOverlayRoot(node));
+  }
+
+  function isInteractiveHeaderControl(node) {
+    return Boolean(
+      node
+      && node.closest
+      && node.closest(".linguapop-provider, .linguapop-close, .linguapop-settings")
+    );
   }
 
   function findOverlayRoot(node) {
@@ -560,8 +655,10 @@
 
   function closePopup() {
     if (state.popupElement) {
+      state.popupElement.classList.remove("linguapop-popup-dragging");
       state.popupElement.remove();
       state.popupElement = null;
     }
+    state.dragState = null;
   }
 })(window);

@@ -16,10 +16,14 @@
   ],
   "host_permissions": [
     "https://tmt.intl.tencentcloudapi.com/*",
-    "https://fanyi-api.baidu.com/*"
+    "https://fanyi-api.baidu.com/*",
+    "https://translate.googleapis.com/*"
   ],
   "background": {
     "service_worker": "src/background/background.js"
+  },
+  "action": {
+    "default_title": "打开 LinguaPop 设置"
   },
   "web_accessible_resources": [
     {

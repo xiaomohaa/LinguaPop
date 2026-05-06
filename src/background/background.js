@@ -13,6 +13,10 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
+chrome.action.onClicked.addListener(() => {
+  chrome.runtime.openOptionsPage();
+});
+
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId !== "linguapop-translate-selection" || !tab || !tab.id) {
     return;
@@ -75,16 +79,28 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 async function handleTranslateSelection(payload) {
   const text = String(payload && payload.text ? payload.text : "").trim();
-  const translation = await getTranslation(text, payload && payload.provider ? payload.provider : "");
+  const translation = await getTranslation(
+    text,
+    payload && payload.provider ? payload.provider : "",
+    Boolean(payload && payload.forceTranslate)
+  );
   return {
     text,
     translation
   };
 }
 
-async function getTranslation(text, providerOverride) {
+async function getTranslation(text, providerOverride, forceTranslate) {
   const settings = await storage.readSettings();
   const selectedProvider = providerOverride || settings.provider;
+  const detectedLanguage = detectLanguage(text);
+
+  if (!forceTranslate && detectedLanguage && detectedLanguage === settings.nativeLanguage) {
+    const error = new Error("same-as-native-language");
+    error.code = "same-as-native-language";
+    throw error;
+  }
+
   const cacheKey = `${selectedProvider}:${text}`;
   const cached = translationCache.get(cacheKey);
 
@@ -112,10 +128,41 @@ async function getTranslation(text, providerOverride) {
   return translation;
 }
 
+function detectLanguage(text) {
+  const sample = String(text || "").trim();
+  if (!sample) {
+    return "";
+  }
+
+  const cjkMatches = sample.match(/[\u3400-\u9fff]/g);
+  const latinMatches = sample.match(/[A-Za-z]/g);
+  const cjkCount = cjkMatches ? cjkMatches.length : 0;
+  const latinCount = latinMatches ? latinMatches.length : 0;
+
+  if (cjkCount === 0 && latinCount === 0) {
+    return "";
+  }
+
+  if (cjkCount > latinCount) {
+    return config.nativeLanguage.zh;
+  }
+
+  if (latinCount > cjkCount) {
+    return config.nativeLanguage.en;
+  }
+
+  return "";
+}
+
 function mapError(error) {
   const code = error && error.code ? error.code : "unknown-error";
 
   switch (code) {
+    case "same-as-native-language":
+      return {
+        code,
+        message: "已是母语内容，未发起翻译请求。"
+      };
     case "missing-api-key":
       return {
         code,
@@ -142,6 +189,11 @@ function mapError(error) {
         message: "请求过于频繁，请稍后再试。"
       };
     case "provider-error":
+      return {
+        code,
+        message: "翻译失败，请稍后重试。"
+      };
+    case "unknown-error":
       return {
         code,
         message: "翻译失败，请稍后重试。"

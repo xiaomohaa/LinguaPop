@@ -41,12 +41,13 @@
 
 .linguapop-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
   padding: 10px 14px 9px;
   background: linear-gradient(135deg, #b7d6f8 0%, #7eaee2 100%);
   color: #14375d;
+  cursor: move;
 }
 
 .linguapop-brand {
@@ -63,7 +64,7 @@
 .linguapop-title-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
 }
 
@@ -109,12 +110,12 @@
 
 .linguapop-logo {
   display: block;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   flex: 0 0 auto;
-  border-radius: 5px;
-  box-shadow: 0 4px 10px rgba(14, 46, 84, 0.16);
-  opacity: 0.95;
+  border-radius: 6px;
+  box-shadow: 0 5px 12px rgba(14, 46, 84, 0.18);
+  opacity: 0.98;
 }
 
 .linguapop-original,
@@ -135,17 +136,17 @@
 .linguapop-meta {
   margin: 0;
   color: rgba(20, 55, 93, 0.9);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   line-height: 1.35;
 }
 
 .linguapop-provider {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
   flex: 0 0 auto;
-  padding: 2px 6px;
+  min-width: 50px;
+  padding: 2px 20px 2px 7px;
+  border: 0;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.42);
   color: rgba(25, 72, 118, 0.86);
@@ -155,6 +156,22 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(25, 72, 118, 0.7) 50%),
+    linear-gradient(135deg, rgba(25, 72, 118, 0.7) 50%, transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.42));
+  background-position:
+    calc(100% - 10px) calc(50% - 1px),
+    calc(100% - 6px) calc(50% - 1px),
+    0 0;
+  background-size: 4px 4px, 4px 4px, 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.linguapop-popup-dragging {
+  user-select: none;
 }
 
 .linguapop-translated {

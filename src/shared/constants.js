@@ -8,6 +8,7 @@
       tencentProjectId: "tencentProjectId",
       baiduAppId: "baiduAppId",
       baiduSecretKey: "baiduSecretKey",
+      nativeLanguage: "nativeLanguage",
       triggerMode: "triggerMode",
       provider: "provider"
     },
@@ -22,12 +23,18 @@
       tencentProjectId: "0",
       baiduAppId: "",
       baiduSecretKey: "",
+      nativeLanguage: "zh",
       triggerMode: "auto",
       provider: "tencent"
     },
     provider: {
       tencent: "tencent",
-      baidu: "baidu"
+      baidu: "baidu",
+      google: "google"
+    },
+    nativeLanguage: {
+      zh: "zh",
+      en: "en"
     },
     limits: {
       maxSelectionLength: 240,

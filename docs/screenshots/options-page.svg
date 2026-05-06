@@ -1,0 +1,39 @@
+<svg width="1280" height="820" viewBox="0 0 1280 820" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="160" y1="40" x2="1120" y2="780" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F1EADC"/>
+      <stop offset="0.46" stop-color="#F8F4EC"/>
+      <stop offset="1" stop-color="#FFFDF8"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="356" y1="110" x2="916" y2="720" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFDF9" stop-opacity="0.98"/>
+      <stop offset="1" stop-color="#FFF9EF" stop-opacity="0.95"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="820" fill="url(#bg)"/>
+  <rect x="348" y="96" width="584" height="628" rx="26" fill="url(#panel)" stroke="#E2D3BF"/>
+  <text x="402" y="164" fill="#8B4D16" font-size="13" font-family="Arial, sans-serif" font-weight="700" letter-spacing="2.5">LINGUAPOP</text>
+  <text x="402" y="210" fill="#241914" font-size="34" font-family="Arial, sans-serif" font-weight="700">划词翻译设置</text>
+  <text x="402" y="246" fill="#6F5A49" font-size="17" font-family="Arial, sans-serif">选择翻译平台、填写凭证，并设置母语和默认触发方式。</text>
+
+  <text x="402" y="304" fill="#241914" font-size="15" font-family="Arial, sans-serif" font-weight="700">翻译服务</text>
+  <rect x="402" y="320" width="476" height="54" rx="14" fill="#FFFFFF" stroke="#E4D5C2"/>
+  <text x="426" y="354" fill="#3E3027" font-size="16" font-family="Arial, sans-serif">腾讯云机器翻译</text>
+  <path d="M840 341L848 349L856 341" stroke="#8B735C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <text x="402" y="410" fill="#6F5A49" font-size="13" font-family="Arial, sans-serif">腾讯云模式需要填写 SecretId 和 SecretKey。</text>
+
+  <text x="402" y="458" fill="#241914" font-size="15" font-family="Arial, sans-serif" font-weight="700">腾讯云 SecretId</text>
+  <rect x="402" y="474" width="476" height="54" rx="14" fill="#FFFFFF" stroke="#E4D5C2"/>
+  <text x="426" y="508" fill="#B79F89" font-size="15" font-family="Arial, sans-serif">请输入 SecretId</text>
+
+  <text x="402" y="562" fill="#241914" font-size="15" font-family="Arial, sans-serif" font-weight="700">母语</text>
+  <rect x="402" y="578" width="476" height="54" rx="14" fill="#FFFFFF" stroke="#E4D5C2"/>
+  <text x="426" y="612" fill="#3E3027" font-size="16" font-family="Arial, sans-serif">中文</text>
+  <path d="M840 599L848 607L856 599" stroke="#8B735C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <text x="402" y="670" fill="#241914" font-size="15" font-family="Arial, sans-serif" font-weight="700">触发方式</text>
+  <rect x="402" y="686" width="476" height="52" rx="14" fill="#FBF6EE" stroke="#E4D5C2"/>
+  <circle cx="430" cy="712" r="8" fill="#8B4D16"/>
+  <text x="454" y="718" fill="#4A382B" font-size="16" font-family="Arial, sans-serif">默认自动弹出翻译卡片</text>
+</svg>

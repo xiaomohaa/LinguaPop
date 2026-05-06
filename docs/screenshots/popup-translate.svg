@@ -1,0 +1,33 @@
+<svg width="1280" height="820" viewBox="0 0 1280 820" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="page" x1="80" y1="40" x2="1200" y2="780" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F6FAFD"/>
+      <stop offset="1" stop-color="#E3EDF6"/>
+    </linearGradient>
+    <linearGradient id="header" x1="572" y1="278" x2="904" y2="356" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B7D6F8"/>
+      <stop offset="1" stop-color="#7EAEE2"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="820" fill="url(#page)"/>
+  <rect x="176" y="152" width="940" height="448" rx="28" fill="#FAFCFE"/>
+  <text x="232" y="246" fill="#334B63" font-size="28" font-family="Arial, sans-serif">I need a selection translation extension for Chrome.</text>
+  <rect x="418" y="220" width="382" height="42" rx="8" fill="#FFE892"/>
+  <text x="436" y="249" fill="#334B63" font-size="28" font-family="Arial, sans-serif">selection translation extension</text>
+
+  <rect x="560" y="278" width="344" height="242" rx="22" fill="#F8FBFF" stroke="#BFD7F2"/>
+  <path d="M560 300C560 287.85 569.85 278 582 278H882C894.15 278 904 287.85 904 300V334H560V300Z" fill="url(#header)"/>
+  <rect x="578" y="294" width="20" height="20" rx="6" fill="#D9ECFF"/>
+  <text x="608" y="309" fill="#14375D" font-size="16" font-family="Arial, sans-serif" font-weight="700">English → 中文</text>
+  <rect x="748" y="292" width="54" height="22" rx="11" fill="rgba(255,255,255,0.42)"/>
+  <text x="762" y="307" fill="#194876" font-size="10" font-family="Arial, sans-serif" font-weight="700" letter-spacing="0.8">腾讯</text>
+  <path d="M788 301L792 305L796 301" stroke="#194876" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="870" y="292" width="22" height="22" rx="11" fill="rgba(255,255,255,0.36)"/>
+  <text x="877" y="308" fill="#14375D" font-size="13" font-family="Arial, sans-serif">×</text>
+
+  <text x="580" y="378" fill="#6F88A4" font-size="11" font-family="Arial, sans-serif" font-weight="700" letter-spacing="1.4">原文</text>
+  <text x="580" y="408" fill="#496680" font-size="13" font-family="Arial, sans-serif">selection translation extension</text>
+  <path d="M580 430H840" stroke="#B9D6F4" stroke-width="1.5"/>
+  <text x="580" y="458" fill="#6F88A4" font-size="11" font-family="Arial, sans-serif" font-weight="700" letter-spacing="1.4">译文</text>
+  <text x="580" y="492" fill="#173F69" font-size="18" font-family="Arial, sans-serif" font-weight="700">划词翻译插件</text>
+</svg>
