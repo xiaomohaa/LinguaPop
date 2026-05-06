@@ -3,6 +3,12 @@
   "name": "LinguaPop",
   "version": "0.1.0",
   "description": "Translate selected text with a floating card or context menu.",
+  "icons": {
+    "16": "src/assets/icons/icon16.png",
+    "32": "src/assets/icons/icon32.png",
+    "48": "src/assets/icons/icon48.png",
+    "128": "src/assets/icons/icon128.png"
+  },
   "permissions": [
     "storage",
     "contextMenus",
