@@ -25,7 +25,7 @@
 LinguaPop 当前不走 Chrome Web Store，推荐直接从 GitHub Releases 下载并自行安装。
 
 1. 打开项目的 Releases 页面：`https://github.com/xiaomohaa/LinguaPop/releases`
-2. 下载最新的发布包，比如 `linguapop-0.1.0.zip`
+2. 下载最新的发布包，比如 `linguapop-1.0.0.zip`
 3. 将 zip 解压到一个固定目录
 4. 打开 Chrome 扩展管理页：`chrome://extensions`
 5. 打开右上角 `开发者模式`
