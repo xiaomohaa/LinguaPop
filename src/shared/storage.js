@@ -16,9 +16,21 @@
       baiduAppId: String(stored.baiduAppId || "").trim(),
       baiduSecretKey: String(stored.baiduSecretKey || "").trim(),
       nativeLanguage: stored.nativeLanguage || defaults.nativeLanguage,
+      maxSelectionLength: normalizeMaxSelectionLength(stored.maxSelectionLength),
       triggerMode: stored.triggerMode || defaults.triggerMode,
       provider: stored.provider || defaults.provider
     }));
+  }
+
+  function normalizeMaxSelectionLength(value) {
+    const parsed = Number.parseInt(value, 10);
+    if (!Number.isFinite(parsed)) {
+      return config.defaultSettings.maxSelectionLength;
+    }
+    return Math.max(
+      config.limits.minSelectionLength,
+      Math.min(parsed, config.limits.maxSelectionLength)
+    );
   }
 
   function writeSettings(partialSettings) {

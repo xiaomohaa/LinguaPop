@@ -11,6 +11,7 @@
   const baiduAppIdInput = document.getElementById("baidu-app-id");
   const baiduSecretKeyInput = document.getElementById("baidu-secret-key");
   const nativeLanguageInput = document.getElementById("native-language");
+  const maxSelectionLengthInput = document.getElementById("max-selection-length");
   const tencentFields = document.getElementById("tencent-fields");
   const baiduFields = document.getElementById("baidu-fields");
   const providerNote = document.getElementById("provider-note");
@@ -30,6 +31,7 @@
     baiduAppIdInput.value = settings.baiduAppId;
     baiduSecretKeyInput.value = settings.baiduSecretKey;
     nativeLanguageInput.value = settings.nativeLanguage || config.defaultSettings.nativeLanguage;
+    maxSelectionLengthInput.value = settings.maxSelectionLength || config.defaultSettings.maxSelectionLength;
     syncProviderFields(providerInput.value);
 
     const triggerInput = form.elements.namedItem("triggerMode");
@@ -79,6 +81,7 @@
       baiduAppId: String(formData.get("baiduAppId") || "").trim(),
       baiduSecretKey: String(formData.get("baiduSecretKey") || "").trim(),
       nativeLanguage: String(formData.get("nativeLanguage") || config.defaultSettings.nativeLanguage),
+      maxSelectionLength: normalizeMaxSelectionLength(formData.get("maxSelectionLength")),
       triggerMode: String(formData.get("triggerMode") || config.triggerModes.auto),
     };
 
@@ -87,5 +90,16 @@
     window.setTimeout(() => {
       statusNode.textContent = "";
     }, 2500);
+  }
+
+  function normalizeMaxSelectionLength(value) {
+    const parsed = Number.parseInt(value, 10);
+    if (!Number.isFinite(parsed)) {
+      return config.defaultSettings.maxSelectionLength;
+    }
+    return Math.max(
+      config.limits.minSelectionLength,
+      Math.min(parsed, config.limits.maxSelectionLength)
+    );
   }
 })(window);

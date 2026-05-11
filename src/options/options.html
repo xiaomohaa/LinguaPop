@@ -11,7 +11,7 @@
       <section class="panel">
         <p class="eyebrow">LinguaPop</p>
         <h1>划词翻译设置</h1>
-        <p class="intro">支持腾讯云机器翻译和百度翻译。先选择服务商，再填写对应凭证，即可在网页里划词翻译或用右键菜单触发翻译。</p>
+        <p class="intro">支持腾讯云机器翻译、百度翻译和谷歌实验模式。先选择服务商，再填写对应凭证，即可在网页里划词翻译或用右键菜单触发翻译。</p>
 
         <form id="settings-form" class="form">
           <label class="field">
@@ -66,6 +66,11 @@
               <option value="zh">中文</option>
               <option value="en">英文</option>
             </select>
+          </label>
+
+          <label class="field">
+            <span>最大选中文本长度</span>
+            <input id="max-selection-length" name="maxSelectionLength" type="number" min="1" max="20000" step="100" inputmode="numeric" autocomplete="off">
           </label>
 
           <fieldset class="field">

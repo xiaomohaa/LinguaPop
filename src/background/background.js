@@ -94,10 +94,18 @@ async function getTranslation(text, providerOverride, forceTranslate) {
   const settings = await storage.readSettings();
   const selectedProvider = providerOverride || settings.provider;
   const detectedLanguage = detectLanguage(text);
+  const maxSelectionLength = normalizeMaxSelectionLength(settings.maxSelectionLength);
 
   if (!forceTranslate && detectedLanguage && detectedLanguage === settings.nativeLanguage) {
     const error = new Error("same-as-native-language");
     error.code = "same-as-native-language";
+    throw error;
+  }
+
+  if (text.length > maxSelectionLength) {
+    const error = new Error("text-too-long");
+    error.code = "text-too-long";
+    error.maxSelectionLength = maxSelectionLength;
     throw error;
   }
 
@@ -108,7 +116,7 @@ async function getTranslation(text, providerOverride, forceTranslate) {
     return cached.translation;
   }
 
-  const translation = await provider.translate({
+  const providerInput = {
     text,
     secretId: settings.tencentSecretId,
     secretKey: settings.tencentSecretKey,
@@ -117,7 +125,8 @@ async function getTranslation(text, providerOverride, forceTranslate) {
     appId: settings.baiduAppId,
     baiduSecretKey: settings.baiduSecretKey,
     provider: selectedProvider
-  });
+  };
+  const translation = await translateText(providerInput, detectedLanguage);
   translation.provider = selectedProvider;
 
   translationCache.set(cacheKey, {
@@ -126,6 +135,101 @@ async function getTranslation(text, providerOverride, forceTranslate) {
   });
 
   return translation;
+}
+
+async function translateText(input, detectedLanguage) {
+  const chunks = splitTextIntoChunks(input.text, config.limits.providerChunkLength);
+  const targetLang = getTargetLanguage(detectedLanguage, input.text);
+
+  if (chunks.length <= 1) {
+    return provider.translate({
+      ...input,
+      targetLang
+    });
+  }
+
+  const translations = [];
+  for (const chunk of chunks) {
+    const translation = await provider.translate({
+      ...input,
+      text: chunk,
+      targetLang
+    });
+    translations.push(translation);
+  }
+
+  return {
+    originalText: input.text,
+    translatedText: translations.map((translation) => translation.translatedText).join("\n"),
+    sourceLang: translations[0] ? translations[0].sourceLang : "",
+    targetLang: translations[0] ? translations[0].targetLang : ""
+  };
+}
+
+function splitTextIntoChunks(text, maxChunkLength) {
+  const normalized = String(text || "").trim();
+  if (!normalized) {
+    return [];
+  }
+
+  const sentences = normalized.match(/[^。！？.!?]+[。！？.!?]?|\S+/g) || [normalized];
+  const chunks = [];
+  let current = "";
+
+  sentences.forEach((sentence) => {
+    const part = sentence.trim();
+    if (!part) {
+      return;
+    }
+
+    if (part.length > maxChunkLength) {
+      if (current) {
+        chunks.push(current);
+        current = "";
+      }
+      for (let index = 0; index < part.length; index += maxChunkLength) {
+        chunks.push(part.slice(index, index + maxChunkLength));
+      }
+      return;
+    }
+
+    const next = current ? `${current} ${part}` : part;
+    if (next.length > maxChunkLength) {
+      chunks.push(current);
+      current = part;
+      return;
+    }
+
+    current = next;
+  });
+
+  if (current) {
+    chunks.push(current);
+  }
+
+  return chunks;
+}
+
+function getTargetLanguage(detectedLanguage, text) {
+  const sourceLanguage = detectedLanguage || detectLanguage(text);
+  if (sourceLanguage === config.nativeLanguage.zh) {
+    return "en";
+  }
+  if (sourceLanguage === config.nativeLanguage.en) {
+    return "zh";
+  }
+  return "";
+}
+
+function normalizeMaxSelectionLength(value) {
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed)) {
+    return config.defaultSettings.maxSelectionLength;
+  }
+  return Math.max(
+    config.limits.minSelectionLength,
+    Math.min(parsed, config.limits.maxSelectionLength)
+  );
 }
 
 function detectLanguage(text) {
@@ -181,7 +285,7 @@ function mapError(error) {
     case "text-too-long":
       return {
         code,
-        message: "选中文本过长，请缩短后再试。"
+        message: `选中文本过长，请控制在 ${error.maxSelectionLength || config.defaultSettings.maxSelectionLength} 字符以内。`
       };
     case "rate-limited":
       return {

@@ -357,8 +357,9 @@ importScripts("../shared/constants.js");
       throw error;
     }
 
-    const firstTranslation = responseBody.trans_result && responseBody.trans_result[0];
-    if (!firstTranslation || !firstTranslation.dst) {
+    const translationResults = Array.isArray(responseBody.trans_result) ? responseBody.trans_result : [];
+    const translatedText = translationResults.map((item) => item && item.dst ? item.dst : "").join("\n").trim();
+    if (!translatedText) {
       const error = new Error("invalid-provider-response");
       error.code = "provider-error";
       throw error;
@@ -366,7 +367,7 @@ importScripts("../shared/constants.js");
 
     return {
       originalText: text,
-      translatedText: firstTranslation.dst,
+      translatedText,
       sourceLang: normalizeLanguage(responseBody.from),
       targetLang: normalizeLanguage(responseBody.to)
     };

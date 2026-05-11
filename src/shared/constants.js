@@ -9,6 +9,7 @@
       baiduAppId: "baiduAppId",
       baiduSecretKey: "baiduSecretKey",
       nativeLanguage: "nativeLanguage",
+      maxSelectionLength: "maxSelectionLength",
       triggerMode: "triggerMode",
       provider: "provider"
     },
@@ -24,6 +25,7 @@
       baiduAppId: "",
       baiduSecretKey: "",
       nativeLanguage: "zh",
+      maxSelectionLength: 5000,
       triggerMode: "auto",
       provider: "tencent"
     },
@@ -37,7 +39,9 @@
       en: "en"
     },
     limits: {
-      maxSelectionLength: 240,
+      minSelectionLength: 1,
+      maxSelectionLength: 20000,
+      providerChunkLength: 900,
       cacheTtlMs: 60 * 1000
     },
     messages: {

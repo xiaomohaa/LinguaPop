@@ -28,9 +28,11 @@
 }
 
 .linguapop-popup {
-  position: absolute;
+  position: fixed;
   z-index: 2147483647;
-  width: min(336px, calc(100vw - 24px));
+  min-width: min(300px, calc(100vw - 24px));
+  width: max-content;
+  max-width: min(680px, calc(100vw - 24px));
   border: 1px solid rgba(97, 140, 191, 0.14);
   border-radius: 22px;
   overflow: hidden;
@@ -69,6 +71,8 @@
 }
 
 .linguapop-body {
+  max-height: min(520px, calc(100vh - 96px));
+  overflow-y: auto;
   padding: 16px;
   background:
     radial-gradient(circle at top left, rgba(232, 244, 255, 0.92), transparent 36%),
@@ -78,6 +82,7 @@
 .linguapop-section {
   display: grid;
   gap: 6px;
+  max-width: 100%;
 }
 
 .linguapop-label {
@@ -131,6 +136,9 @@
   color: #496680;
   font-size: 13px;
   line-height: 1.5;
+  max-width: 56ch;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .linguapop-meta {
@@ -179,6 +187,9 @@
   font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
+  max-width: 56ch;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .linguapop-status,
