@@ -23,7 +23,6 @@
     document.addEventListener("mousedown", onDocumentMouseDown, true);
     document.addEventListener("mousemove", onDocumentMouseMove, true);
     document.addEventListener("mouseup", onDocumentMouseUp, true);
-    document.addEventListener("scroll", clearTransientUi, true);
 
     chrome.runtime.onMessage.addListener((message) => {
       if (!message || !message.type) {
@@ -89,7 +88,7 @@
     const selection = window.getSelection();
 
     if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
-      clearTransientUi();
+      closeButton();
       return;
     }
 
@@ -97,13 +96,34 @@
       return;
     }
 
-    const text = sanitizeSelectionText(selection.toString());
     const rect = selection.getRangeAt(0).getBoundingClientRect();
+    const selectionResult = sanitizeSelectionText(selection.toString());
 
-    if (!text || !isValidRect(rect)) {
-      clearTransientUi();
+    if (!isValidRect(rect)) {
+      closeButton();
       return;
     }
+
+    if (selectionResult.reason === "too-long") {
+      closeButton();
+      renderPopup({
+        rect,
+        status: "error",
+        originalText: selectionResult.previewText,
+        error: {
+          code: "text-too-long",
+          message: `选中文本过长，请控制在 ${getMaxSelectionLength()} 字符以内。`
+        }
+      });
+      return;
+    }
+
+    if (!selectionResult.text) {
+      closeButton();
+      return;
+    }
+
+    const text = selectionResult.text;
 
     state.selectedText = text;
     state.selectedRect = rect;
@@ -121,18 +141,42 @@
   function sanitizeSelectionText(text) {
     const normalized = String(text || "").replace(/\s+/g, " ").trim();
     if (!normalized) {
-      return "";
+      return {
+        text: "",
+        reason: "empty",
+        previewText: ""
+      };
     }
 
-    if (normalized.length > config.limits.maxSelectionLength) {
-      return "";
+    const maxSelectionLength = getMaxSelectionLength();
+    if (normalized.length > maxSelectionLength) {
+      return {
+        text: "",
+        reason: "too-long",
+        previewText: normalized.slice(0, maxSelectionLength)
+      };
     }
 
-    return normalized;
+    return {
+      text: normalized,
+      reason: "",
+      previewText: normalized
+    };
   }
 
   function isValidRect(rect) {
     return rect && rect.width > 0 && rect.height > 0;
+  }
+
+  function getMaxSelectionLength() {
+    const parsed = Number.parseInt(state.settings.maxSelectionLength, 10);
+    if (!Number.isFinite(parsed)) {
+      return config.defaultSettings.maxSelectionLength;
+    }
+    return Math.max(
+      config.limits.minSelectionLength,
+      Math.min(parsed, config.limits.maxSelectionLength)
+    );
   }
 
   function renderButton(rect, text) {
@@ -508,28 +552,40 @@
 
   function positionElement(element, rect, options) {
     const offsetY = options.offsetY || 0;
+    const isFixed = element.classList.contains("linguapop-popup");
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
     const viewportWidth = document.documentElement.clientWidth;
-    const elementWidth = element.offsetWidth || 260;
+    const viewportHeight = document.documentElement.clientHeight;
+    const elementWidth = element.offsetWidth || (isFixed ? 360 : 260);
+    const elementHeight = element.offsetHeight || 180;
     const preferredLeft = options.preferLeftAligned ? rect.left : rect.left + rect.width / 2 - elementWidth / 2;
     const left = Math.max(12, Math.min(preferredLeft, viewportWidth - elementWidth - 12));
-    const top = rect.bottom + scrollY + offsetY;
+    const bottomTop = rect.bottom + offsetY;
+    const topTop = rect.top - elementHeight - offsetY;
+    let viewportTop = bottomTop;
 
-    element.style.left = `${left + scrollX}px`;
-    element.style.top = `${top}px`;
+    if (bottomTop + elementHeight > viewportHeight - 12 && topTop >= 12) {
+      viewportTop = topTop;
+    } else if (bottomTop + elementHeight > viewportHeight - 12) {
+      viewportTop = Math.max(12, viewportHeight - elementHeight - 12);
+    }
+
+    element.style.left = `${left + (isFixed ? 0 : scrollX)}px`;
+    element.style.top = `${viewportTop + (isFixed ? 0 : scrollY)}px`;
   }
 
   function positionElementByCoordinates(element, left, top) {
     const viewportWidth = document.documentElement.clientWidth;
     const viewportHeight = document.documentElement.clientHeight;
-    const elementWidth = element.offsetWidth || 336;
+    const elementWidth = element.offsetWidth || 360;
     const elementHeight = element.offsetHeight || 180;
     const nextLeft = Math.max(12, Math.min(left, viewportWidth - elementWidth - 12));
     const nextTop = Math.max(12, Math.min(top, viewportHeight - elementHeight - 12));
 
-    element.style.left = `${nextLeft + window.scrollX}px`;
-    element.style.top = `${nextTop + window.scrollY}px`;
+    const isFixed = element.classList.contains("linguapop-popup");
+    element.style.left = `${nextLeft + (isFixed ? 0 : window.scrollX)}px`;
+    element.style.top = `${nextTop + (isFixed ? 0 : window.scrollY)}px`;
   }
 
   function stopOverlayEvent(event) {
@@ -638,7 +694,7 @@
     if (state.buttonElement && state.buttonElement.contains(target)) {
       return;
     }
-    clearTransientUi();
+    closeButton();
   }
 
   function clearTransientUi() {

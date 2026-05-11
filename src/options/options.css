@@ -95,6 +95,7 @@ legend {
 
 input[type="password"],
 input[type="text"],
+input[type="number"],
 select {
   width: 100%;
   padding: 14px 16px;
